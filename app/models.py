@@ -1,7 +1,7 @@
 import datetime
 
 import config
-from sqlalchemy import DateTime, Integer, String, func
+from sqlalchemy import DateTime, Integer, String, func, Float
 from sqlalchemy.ext.asyncio import (AsyncAttrs, async_sessionmaker,
                                     create_async_engine)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
@@ -16,11 +16,11 @@ class Base(DeclarativeBase, AsyncAttrs):
         return {"id": self.id}
 
 class Advertisment(Base):
-    __tablename__ = "Advirtesment"
+    __tablename__ = "Advirtesments"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String, index=True)
-    description: Mapped[str] = mapped_column(String, default=None)
-    price: Mapped[int] = mapped_column(Integer, default=None)
+    description: Mapped[str] = mapped_column(String)
+    price: Mapped[float] = mapped_column(Float)
     author: Mapped[str] = mapped_column(String, index=True)
     create_date: Mapped[datetime.datetime] = mapped_column(
         DateTime, server_default=func.now()

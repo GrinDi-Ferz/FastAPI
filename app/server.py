@@ -41,9 +41,7 @@ async def update_advertisement(
 ):
     updated_data_dict = updated_data.model_dump(exclude_unset=True)
     advertisment_orm_obj = await crud.get_item_by_id(session, models.Advertisment, advertisment_id)
-    for fields, value in updated_data_dict.items():
-        setattr(advertisment_orm_obj, fields, value)
-    await crud.add_item(session, advertisment_orm_obj)
+    await crud.update_existing_item(session, advertisment_orm_obj, updated_data_dict)
     return {"status": "success"}
 
 @app.delete("/advertisement/{advertisment_id}", tags=["advertisement_delete"], response_model=DeleteAdvirtesmentResponse)
@@ -53,11 +51,22 @@ async def delete_advertisement(advertisment_id: int, session: SessionDependency)
     return {"status": "success"}
 
 @app.get("/advertisement", response_model=SearchAdvirtesmentResponse)
-async def search_advirtesment(session: SessionDependency, title: str):
-    query = (
-        select(models.Advertisment)
-        .where(models.Advertisment.title == title)
-        .limit(10000)
-    )
-    advertisments = await session.scalars(query)
+async def search_advirtesment(
+        session: SessionDependency,
+        title: str = None,
+        description: str = None,
+        author: str = None,
+        price: int = None
+):
+    query = select(models.Advertisment)
+    if title:
+        query = query.where(models.Advertisment.title.ilike(f"%{title}%"))
+    if description:
+        query = query.where(models.Advertisment.description.ilike(f"%{description}%"))
+    if author:
+        query = query.where(models.Advertisment.author.ilike(f"%{author}%"))
+    if price:
+        query = query.where(models.Advertisment.price == price)
+
+    advertisments = await session.scalars(query.limit(100))
     return {"results": [advertisment.dict for advertisment in advertisments]}

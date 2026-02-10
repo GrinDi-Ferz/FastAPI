@@ -14,8 +14,8 @@ class SuccessResponse(BaseModel):
 
 class CreateAdvirtesmentRequest(BaseModel):
     title: str
-    description: str = None
-    price: int = None
+    description: str
+    price: float
     author: str
 
 
@@ -24,10 +24,10 @@ class CreateAdvirtesmentResponse(IdResponse):
 
 
 class UpdateAdvirtesmentRequest(BaseModel):
-    title: str
+    title: str = None
     description: str = None
-    price: int = None
-    author: str
+    price: float = None
+    author: str = None
 
 class UpdateAdvirtesmentResponse(SuccessResponse):
     pass
@@ -37,7 +37,7 @@ class GetAdvirtesmentResponse(BaseModel):
     id: int
     title: str
     description: str = None
-    price: int = None
+    price: float = None
     author: str
     create_date: datetime.datetime
 
